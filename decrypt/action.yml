@@ -1,0 +1,16 @@
+name: ironhide
+description: Use ironhide to decrypt files
+inputs:
+  keys:
+    description: Contents of ~/.iron/keys for the service account.
+    required: true
+  input:
+    description: Name of file to decrypt.
+    required: true
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+  - ${{ inputs.keys }}
+  - file:decrypt
+  - ${{ inputs.input }}
