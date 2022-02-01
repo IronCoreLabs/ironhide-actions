@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:16
 
 RUN npm install -g --unsafe-perm @ironcorelabs/ironhide
 COPY entrypoint.sh /
