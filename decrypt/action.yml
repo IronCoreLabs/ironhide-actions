@@ -8,9 +8,8 @@ inputs:
     description: Name of file to decrypt.
     required: true
 runs:
-  using: docker
-  image: ../Dockerfile
-  args:
-  - ${{ inputs.keys }}
-  - file:decrypt
-  - ${{ inputs.input }}
+  using: composite
+  steps:
+    - run: npm install -g --unsafe-perm @ironcorelabs/ironhide
+    - run: entrypoint.sh ${{ inputs.keys }} file:decrypt ${{ inputs.input }}
+      shell: bash
