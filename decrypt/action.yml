@@ -11,5 +11,6 @@ runs:
   using: composite
   steps:
     - run: npm install -g --unsafe-perm @ironcorelabs/ironhide
+      shell: bash
     - run: entrypoint.sh ${{ inputs.keys }} file:decrypt ${{ inputs.input }}
       shell: bash
