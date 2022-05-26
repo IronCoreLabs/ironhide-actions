@@ -15,5 +15,5 @@ runs:
         node-version: 16
     - run: npm install -g --unsafe-perm @ironcorelabs/ironhide
       shell: bash
-    - run: ./entrypoint.sh ${{ inputs.keys }} file:decrypt ${{ inputs.input }}
+    - run: ${{ github.action_path }}/entrypoint.sh ${{ inputs.keys }} file:decrypt ${{ inputs.input }}
       shell: bash
