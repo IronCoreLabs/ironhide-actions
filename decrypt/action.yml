@@ -15,9 +15,9 @@ runs:
         node-version: 16
     - run: npm install -g --unsafe-perm @ironcorelabs/ironhide
       shell: bash
-    - run:
-        mkdir -p ~/.iron
-        echo "${{ inputs.keys }}" > ~/.iron/keys
+    - run: mkdir -p ~/.iron
+      shell: bash
+    - run: echo "${{ inputs.keys }}" > ~/.iron/keys
       shell: bash
     - run: "ironhide file:decrypt ${{ inputs.input }}"
       shell: bash
