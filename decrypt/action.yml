@@ -8,9 +8,16 @@ inputs:
     description: Name of file to decrypt.
     required: true
 runs:
-  using: docker
-  image: ../Dockerfile
-  args:
-  - ${{ inputs.keys }}
-  - file:decrypt
-  - ${{ inputs.input }}
+  using: composite
+  steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - run: npm install -g --unsafe-perm @ironcorelabs/ironhide
+      shell: bash
+    - run: mkdir -p ~/.iron
+      shell: bash
+    - run: echo '${{ inputs.keys }}' > ~/.iron/keys
+      shell: bash
+    - run: "ironhide file:decrypt ${{ inputs.input }}"
+      shell: bash
