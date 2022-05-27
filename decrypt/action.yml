@@ -17,7 +17,7 @@ runs:
       shell: bash
     - run: mkdir -p ~/.iron
       shell: bash
-    - run: echo "${{ inputs.keys }}" > ~/.iron/keys
+    - run: echo '${{ inputs.keys }}'' > ~/.iron/keys
       shell: bash
     - run: "ironhide file:decrypt ${{ inputs.input }}"
       shell: bash
