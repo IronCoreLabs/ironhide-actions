@@ -10,14 +10,23 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/setup-node@v3
+    - name: Download release
+      uses: robinraju/release-downloader@v1.6
       with:
-        node-version: 16
-    - run: npm install -g --unsafe-perm @ironcorelabs/ironhide
+        repository: "IronCoreLabs/ironhide"
+        fileName: "*linux-musl*"
+        latest: true
+        tarBall: true
+    - name: Unzip and rename
+      run: |
+        tar -xf *linux-musl*
+        rm -rf *.gz
+        mv *linux-musl* ironhide
       shell: bash
-    - run: mkdir -p ~/.iron
-      shell: bash
-    - run: echo '${{ inputs.keys }}' > ~/.iron/keys
-      shell: bash
-    - run: "ironhide file:decrypt ${{ inputs.input }}"
+    - name: Set keys and decrypt
+      run: |
+        mkdir -p ~/.iron
+        echo '${{ secrets.IRONHIDE_KEYS }}' > ~/.iron/keys
+        ironhide/ironhide file decrypt ${{ inputs.input }}
+        ls
       shell: bash
