@@ -10,23 +10,39 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Download release
+    - name: Set env vars (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        echo FILE_PATTERN='*linux-musl*' >> $GITHUB_ENV
+        echo UNZIP_CMD='tar -xf *linux-musl*' >> $GITHUB_ENV
+    - name: Set env vars (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        echo FILE_PATTERN='*apple-darwin*' >> $GITHUB_ENV
+        echo UNZIP_CMD='tar -xf *apple-darwin*' >> $GITHUB_ENV
+    - name: Set env vars (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        echo FILE_PATTERN='*windows-gnu*' >> $env:GITHUB_ENV
+        echo UNZIP_CMD='7z x *windows-gnu*' >> $env:GITHUB_ENV
+    - name: Download ironhide release
       uses: robinraju/release-downloader@v1.6
       with:
         repository: "IronCoreLabs/ironhide"
-        fileName: "*linux-musl*"
+        fileName: ${{ env.FILE_PATTERN }}
         latest: true
         tarBall: true
+        zipBall: true
     - name: Unzip and rename
-      run: |
-        tar -xf *linux-musl*
-        rm -rf *.gz
-        mv *linux-musl* ironhide
       shell: bash
+      run: |
+        ${{ env.UNZIP_CMD }}
+        rm -rf ${{ env.FILE_PATTERN }}.gz
+        rm -rf ${{ env.FILE_PATTERN }}.zip
+        mv ${{ env.FILE_PATTERN }} ironhide
     - name: Set keys and decrypt
+      shell: bash
       run: |
         mkdir -p ~/.iron
-        echo '${{ inputs.keys }}' > ~/.iron/keys
-        ironhide/ironhide file decrypt ${{ inputs.input }}
-        ls
-      shell: bash
+        echo '${{ input.keys }}' > ~/.iron/keys
+        ironhide/ironhide file decrypt ${{ input.input }}
