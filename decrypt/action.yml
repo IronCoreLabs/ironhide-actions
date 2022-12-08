@@ -47,5 +47,5 @@ runs:
       shell: bash
       run: |
         mkdir -p ~/.iron
-        echo '${{ input.keys }}' > ~/.iron/keys
-        ironhide/ironhide file decrypt ${{ input.input }}
+        echo '${{ inputs.keys }}' > ~/.iron/keys
+        ironhide/ironhide file decrypt ${{ inputs.input }}
