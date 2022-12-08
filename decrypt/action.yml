@@ -26,7 +26,7 @@ runs:
     - name: Set keys and decrypt
       run: |
         mkdir -p ~/.iron
-        echo '${{ secrets.IRONHIDE_KEYS }}' > ~/.iron/keys
+        echo '${{ inputs.keys }}' > ~/.iron/keys
         ironhide/ironhide file decrypt ${{ inputs.input }}
         ls
       shell: bash
