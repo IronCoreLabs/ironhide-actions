@@ -42,13 +42,12 @@ runs:
       shell: bash
       run: |
         ${{ env.UNZIP_CMD }}
-        rm -rf ${{ env.FILE_PATTERN }}.gz
-        rm -rf ${{ env.FILE_PATTERN }}.zip
         mv ${{ env.FILE_PATTERN }}/ironhide* ironhide
-        rm -rf ${{ env.FILE_PATTERN }}
         mkdir -p ~/.iron
         echo '${{ inputs.keys }}' > ~/.iron/keys
         echo IRONHIDE_INSTALLED=true >> $GITHUB_ENV
     - name: Decrypt file
       shell: bash
-      run: ./ironhide file decrypt ${{ inputs.input }}
+      run: |
+        ./ironhide file decrypt ${{ inputs.input }}
+        echo 'Decryption of ${{ inputs.input }} was successful'
