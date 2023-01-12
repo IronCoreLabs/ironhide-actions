@@ -42,10 +42,10 @@ runs:
         ${{ env.UNZIP_CMD }}
         rm -rf ${{ env.FILE_PATTERN }}.gz
         rm -rf ${{ env.FILE_PATTERN }}.zip
-        mv ${{ env.FILE_PATTERN }} ironhide
+        mv ${{ env.FILE_PATTERN }}/ironhide* ironhide
     - name: Set keys and decrypt
       shell: bash
       run: |
         mkdir -p ~/.iron
         echo '${{ inputs.keys }}' > ~/.iron/keys
-        ironhide/ironhide file decrypt ${{ inputs.input }}
+        ironhide file decrypt ${{ inputs.input }}
