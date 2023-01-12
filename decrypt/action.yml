@@ -29,7 +29,7 @@ runs:
         echo FILE_PATTERN='*windows-msvc*' >> $GITHUB_ENV
         echo UNZIP_CMD='7z x *windows-msvc*' >> $GITHUB_ENV
     - name: Download ironhide release
-      uses: robinraju/release-downloader@v1.6
+      uses: robinraju/release-downloader@v1.7
       with:
         repository: "IronCoreLabs/ironhide"
         fileName: ${{ env.FILE_PATTERN }}
@@ -48,4 +48,4 @@ runs:
       run: |
         mkdir -p ~/.iron
         echo '${{ inputs.keys }}' > ~/.iron/keys
-        ironhide file decrypt ${{ inputs.input }}
+        ./ironhide file decrypt ${{ inputs.input }}
