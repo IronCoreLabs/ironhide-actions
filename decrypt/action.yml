@@ -50,4 +50,4 @@ runs:
       shell: bash
       run: |
         ./ironhide file decrypt ${{ inputs.input }}
-        echo 'Decryption of ${{ inputs.input }} was successful'
+        echo 'Decryption of [${{ inputs.input }}] was successful!'
