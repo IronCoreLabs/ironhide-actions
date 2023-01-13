@@ -35,8 +35,6 @@ runs:
         repository: "IronCoreLabs/ironhide"
         fileName: ${{ env.FILE_PATTERN }}
         latest: true
-        tarBall: true
-        zipBall: true
     - name: Unzip and install ironhide
       if: env.IRONHIDE_INSTALLED != 'true'
       shell: bash
