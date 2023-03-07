@@ -11,13 +11,13 @@ runs:
   using: composite
   steps:
   - name: Set env vars (Linux arm64)
-    if: ${{ runner.os == 'Linux' && runner.arch == "ARM64" && env.IRONHIDE_INSTALLED != 'true' }}
+    if: ${{ runner.os == 'Linux' && runner.arch == 'ARM64' && env.IRONHIDE_INSTALLED != 'true' }}
     shell: bash
     run: |
       echo FILE_PATTERN='*aarch64-unknown-linux*' >> $GITHUB_ENV
       echo UNZIP_CMD='tar -xf *aarch64-unknown-linux*' >> $GITHUB_ENV
   - name: Set env vars (Linux x86_64)
-    if: ${{ runner.os == 'Linux' && runner.arch != "ARM64" && env.IRONHIDE_INSTALLED != 'true' }}
+    if: ${{ runner.os == 'Linux' && runner.arch != 'ARM64' && env.IRONHIDE_INSTALLED != 'true' }}
     shell: bash
     run: |
       echo FILE_PATTERN='*linux-musl*' >> $GITHUB_ENV
