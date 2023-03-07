@@ -10,42 +10,48 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set env vars (Linux)
-      if: ${{ runner.os == 'Linux' && env.IRONHIDE_INSTALLED != 'true' }}
-      shell: bash
-      run: |
-        echo FILE_PATTERN='*linux-musl*' >> $GITHUB_ENV
-        echo UNZIP_CMD='tar -xf *linux-musl*' >> $GITHUB_ENV
-    - name: Set env vars (macOS)
-      if: ${{ runner.os == 'macOS' && env.IRONHIDE_INSTALLED != 'true' }}
-      shell: bash
-      run: |
-        echo FILE_PATTERN='*apple-darwin*' >> $GITHUB_ENV
-        echo UNZIP_CMD='tar -xf *apple-darwin*' >> $GITHUB_ENV
-    - name: Set env vars (Windows)
-      if: ${{ runner.os == 'Windows' && env.IRONHIDE_INSTALLED != 'true' }}
-      shell: bash
-      run: |
-        echo FILE_PATTERN='*windows-msvc*' >> $GITHUB_ENV
-        echo UNZIP_CMD='7z x *windows-msvc*' >> $GITHUB_ENV
-    - name: Download ironhide release
-      if: env.IRONHIDE_INSTALLED != 'true'
-      uses: robinraju/release-downloader@v1.7
-      with:
-        repository: "IronCoreLabs/ironhide"
-        fileName: ${{ env.FILE_PATTERN }}
-        latest: true
-    - name: Unzip and install ironhide
-      if: env.IRONHIDE_INSTALLED != 'true'
-      shell: bash
-      run: |
-        ${{ env.UNZIP_CMD }}
-        mv ${{ env.FILE_PATTERN }}/ironhide* ironhide
-        mkdir -p ~/.iron
-        echo '${{ inputs.keys }}' > ~/.iron/keys
-        echo IRONHIDE_INSTALLED=true >> $GITHUB_ENV
-    - name: Decrypt file
-      shell: bash
-      run: |
-        ./ironhide file decrypt ${{ inputs.input }}
-        echo 'Decryption of [${{ inputs.input }}] was successful!'
+  - name: Set env vars (Linux arm64)
+    if: ${{ runner.os == 'Linux' && runner.arch == "ARM64" && env.IRONHIDE_INSTALLED != 'true' }}
+    shell: bash
+    run: |
+      echo FILE_PATTERN='*aarch64*' >> $GITHUB_ENV
+      echo UNZIP_CMD='tar -xf *aarch64*' >> $GITHUB_ENV
+  - name: Set env vars (Linux x86_64)
+    if: ${{ runner.os == 'Linux' && runner.arch != "ARM64" && env.IRONHIDE_INSTALLED != 'true' }}
+    shell: bash
+    run: |
+      echo FILE_PATTERN='*linux-musl*' >> $GITHUB_ENV
+      echo UNZIP_CMD='tar -xf *linux-musl*' >> $GITHUB_ENV
+  - name: Set env vars (macOS)
+    if: ${{ runner.os == 'macOS' && env.IRONHIDE_INSTALLED != 'true' }}
+    shell: bash
+    run: |
+      echo FILE_PATTERN='*apple-darwin*' >> $GITHUB_ENV
+      echo UNZIP_CMD='tar -xf *apple-darwin*' >> $GITHUB_ENV
+  - name: Set env vars (Windows)
+    if: ${{ runner.os == 'Windows' && env.IRONHIDE_INSTALLED != 'true' }}
+    shell: bash
+    run: |
+      echo FILE_PATTERN='*windows-msvc*' >> $GITHUB_ENV
+      echo UNZIP_CMD='7z x *windows-msvc*' >> $GITHUB_ENV
+  - name: Download ironhide release
+    if: env.IRONHIDE_INSTALLED != 'true'
+    uses: robinraju/release-downloader@v1.7
+    with:
+      repository: "IronCoreLabs/ironhide"
+      fileName: ${{ env.FILE_PATTERN }}
+      latest: true
+  - name: Unzip and install ironhide
+    if: env.IRONHIDE_INSTALLED != 'true'
+    shell: bash
+    run: |
+      ${{ env.UNZIP_CMD }}
+      mv ${{ env.FILE_PATTERN }}/ironhide* ironhide
+      mkdir -p ~/.iron
+      echo '${{ inputs.keys }}' > ~/.iron/keys
+      echo IRONHIDE_INSTALLED=true >> $GITHUB_ENV
+  - name: Decrypt file
+    shell: bash
+    run: |
+      ./ironhide file decrypt ${{ inputs.input }}
+      echo 'Decryption of [${{ inputs.input }}] was successful!'
