@@ -22,12 +22,18 @@ runs:
     run: |
       echo FILE_PATTERN='*linux-musl*' >> $GITHUB_ENV
       echo UNZIP_CMD='tar -xf *linux-musl*' >> $GITHUB_ENV
-  - name: Set env vars (macOS)
-    if: ${{ runner.os == 'macOS' && env.IRONHIDE_INSTALLED != 'true' }}
+  - name: Set env vars (mac arm64)
+    if: ${{ runner.os == 'macOS' && runner.arch == 'ARM64' && env.IRONHIDE_INSTALLED != 'true' }}
     shell: bash
     run: |
-      echo FILE_PATTERN='*apple-darwin*' >> $GITHUB_ENV
-      echo UNZIP_CMD='tar -xf *apple-darwin*' >> $GITHUB_ENV
+      echo FILE_PATTERN='*aarch64-apple-darwin*' >> $GITHUB_ENV
+      echo UNZIP_CMD='tar -xf *aarch64-apple-darwin*' >> $GITHUB_ENV
+  - name: Set env vars (mac x86_64)
+    if: ${{ runner.os == 'macOS' && runner.arch != 'ARM64' && env.IRONHIDE_INSTALLED != 'true' }}
+    shell: bash
+    run: |
+      echo FILE_PATTERN='*x86_64-apple-darwin*' >> $GITHUB_ENV
+      echo UNZIP_CMD='tar -xf *x86_64-apple-darwin*' >> $GITHUB_ENV
   - name: Set env vars (Windows)
     if: ${{ runner.os == 'Windows' && env.IRONHIDE_INSTALLED != 'true' }}
     shell: bash
