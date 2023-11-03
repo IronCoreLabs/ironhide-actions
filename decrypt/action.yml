@@ -23,18 +23,18 @@ runs:
       case ${{ runner.os }} in
         Linux)
           if ["${{ runner.arch }}" = "ARM64"]; then
-            echo "file_pattern='*aarch64-unknown-linux*'" >> "$GITHUB_OUTPUT"
+            echo 'file_pattern=*aarch64-unknown-linux*' >> "$GITHUB_OUTPUT"
           else
-            echo "file_pattern='*linux-musl*'" >> "$GITHUB_OUTPUT"
+            echo 'file_pattern=*linux-musl*' >> "$GITHUB_OUTPUT"
           fi
           ;;
 
         macOS)
-          echo "file_pattern='*apple-darwin*'" >> "$GITHUB_OUTPUT"
+          echo 'file_pattern=*apple-darwin*' >> "$GITHUB_OUTPUT"
           ;;
 
         Windows)
-          echo "file_pattern='*windows-msvc*'" >> "$GITHUB_OUTPUT"
+          echo 'file_pattern=*windows-msvc*' >> "$GITHUB_OUTPUT"
           ;;
 
         *)
