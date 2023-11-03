@@ -59,8 +59,7 @@ runs:
     if: steps.setup.outputs.installed != 'true'
     shell: bash
     run: |
-      mkdir ${{ runner.temp }}
-      mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* ${{ runner.temp }}/ironhide
+      mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* /${{ runner.temp }}/ironhide
       rm -rf ironhide_download
       rm -rf typescript
       mkdir -p ~/.iron
