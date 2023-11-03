@@ -60,8 +60,7 @@ runs:
     shell: bash
     run: |
       if [ "${{ runner.os }}" = "Windows" ]; then
-        # `runner.temp` (${{ runner.temp }}) is currently bugged on Windows
-        mv ironhide_download\\${{ steps.setup.outputs.file_pattern }}\\ironhide* D:\\a_temp\\ironhide
+        mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* '${{ runner.temp }}'/ironhide
       else
         mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* ${{ runner.temp }}/ironhide
       fi 
@@ -88,6 +87,5 @@ runs:
     # we can't fake a tty on windows, so error output here is a bit worse
     shell: bash
     run: |
-      # `runner.temp` (${{ runner.temp }}) is currently bugged on Windows
-      D:/a_temp/ironhide file decrypt ${{ inputs.input }}
+      '${{ runner.temp }}'/ironhide file decrypt ${{ inputs.input }}
       echo 'Decryption of [${{ inputs.input }}] was successful!'
