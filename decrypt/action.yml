@@ -61,7 +61,7 @@ runs:
     run: |
       if [ "${{ runner.os }}" = "Windows" ]; then
         # `runner.temp` (${{ runner.temp }}) is currently bugged on Windows
-        mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* D:/a_temp/ironhide
+        mv ironhide_download\\${{ steps.setup.outputs.file_pattern }}\\ironhide* D:\\a_temp\\ironhide
       else
         mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* ${{ runner.temp }}/ironhide
       fi 
