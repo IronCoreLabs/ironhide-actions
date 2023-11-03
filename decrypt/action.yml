@@ -14,7 +14,7 @@ runs:
     id: setup
     shell: bash
     run: |
-      if [ -f ${{ runner.temp }}/ironhide ]; then
+      if [ -f '${{ runner.temp }}'/ironhide ]; then
         echo "ironhide is already installed."
         echo "installed=true" >> "$GITHUB_OUTPUT"
         exit 0
