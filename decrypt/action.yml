@@ -59,11 +59,7 @@ runs:
     if: steps.setup.outputs.installed != 'true'
     shell: bash
     run: |
-      if [ "${{ runner.os }}" = "Windows" ]; then
-        mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* '${{ runner.temp }}'/ironhide
-      else
-        mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* ${{ runner.temp }}/ironhide
-      fi 
+      mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* '${{ runner.temp }}'/ironhide
       rm -rf ironhide_download
       rm -rf typescript
       mkdir -p ~/.iron
@@ -73,14 +69,14 @@ runs:
     # hack to get a tty in github so ironhide prints output
     shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
     run: |
-      ${{ runner.temp }}/ironhide file decrypt ${{ inputs.input }}
+      '${{ runner.temp }}'/ironhide file decrypt ${{ inputs.input }}
       echo 'Decryption of [${{ inputs.input }}] was successful!'
   - name: Decrypt file
     if: runner.os == 'macOS'
     # hack to get a tty in github so ironhide prints output
     shell: 'script -Fq /dev/null /bin/sh -c "bash --noprofile --norc -eo pipefail {0}"'
     run: |
-      ${{ runner.temp }}/ironhide file decrypt ${{ inputs.input }}
+      '${{ runner.temp }}'/ironhide file decrypt ${{ inputs.input }}
       echo 'Decryption of [${{ inputs.input }}] was successful!'
   - name: Decrypt file
     if: runner.os == 'Windows'
