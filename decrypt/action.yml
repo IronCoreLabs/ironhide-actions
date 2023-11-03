@@ -30,7 +30,11 @@ runs:
           ;;
 
         macOS)
-          echo 'file_pattern=*apple-darwin*' >> "$GITHUB_OUTPUT"
+          if ["${{ runner.arch }}" = "ARM64"]; then
+            echo 'file_pattern=*aarch64-apple-darwin*' >> "$GITHUB_OUTPUT"
+          else
+            echo 'file_pattern=*x86_64-apple-darwin*' >> "$GITHUB_OUTPUT"
+          fi
           ;;
 
         Windows)
@@ -57,7 +61,7 @@ runs:
     run: |
       mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* ${{ runner.temp }}/ironhide
       rm -rf ironhide_download
-      ls -al
+      rm -rf typescript
       mkdir -p ~/.iron
       echo '${{ inputs.keys }}' > ~/.iron/keys
   - name: Decrypt file
