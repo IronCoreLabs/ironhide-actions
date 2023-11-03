@@ -60,7 +60,7 @@ runs:
     shell: bash
     run: |
       if [ "${{ runner.os }}" = "Windows" ]; then
-        mv ironhide_download\\${{ steps.setup.outputs.file_pattern }}\\ironhide* ${{ runner.temp }}\\ironhide  
+        mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* ${{ runner.temp }}\\ironhide
       else
         mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* ${{ runner.temp }}/ironhide
       fi 
