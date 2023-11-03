@@ -59,7 +59,11 @@ runs:
     if: steps.setup.outputs.installed != 'true'
     shell: bash
     run: |
-      mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* /${{ runner.temp }}/ironhide
+      if [ "${{ runner.os }}" = "Windows" ]; then
+        mv ironhide_download\\${{ steps.setup.outputs.file_pattern }}\\ironhide* ${{ runner.temp }}\\ironhide  
+      else
+        mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* ${{ runner.temp }}/ironhide
+      fi 
       rm -rf ironhide_download
       rm -rf typescript
       mkdir -p ~/.iron
