@@ -22,7 +22,7 @@ runs:
 
       case ${{ runner.os }} in
         Linux)
-          if ["${{ runner.arch }}" = "ARM64"]; then
+          if [ "${{ runner.arch }}" = "ARM64" ]; then
             echo 'file_pattern=*aarch64-unknown-linux*' >> "$GITHUB_OUTPUT"
           else
             echo 'file_pattern=*linux-musl*' >> "$GITHUB_OUTPUT"
@@ -30,7 +30,7 @@ runs:
           ;;
 
         macOS)
-          if ["${{ runner.arch }}" = "ARM64"]; then
+          if [ "${{ runner.arch }}" = "ARM64" ]; then
             echo 'file_pattern=*aarch64-apple-darwin*' >> "$GITHUB_OUTPUT"
           else
             echo 'file_pattern=*x86_64-apple-darwin*' >> "$GITHUB_OUTPUT"
