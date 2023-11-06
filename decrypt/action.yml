@@ -10,70 +10,78 @@ inputs:
 runs:
   using: composite
   steps:
-  - name: Set env vars (Linux arm64)
-    if: ${{ runner.os == 'Linux' && runner.arch == 'ARM64' && env.IRONHIDE_INSTALLED != 'true' }}
+  - name: Set up environment
+    id: setup
     shell: bash
     run: |
-      echo FILE_PATTERN='*aarch64-unknown-linux*' >> $GITHUB_ENV
-      echo UNZIP_CMD='tar -xf *aarch64-unknown-linux*' >> $GITHUB_ENV
-  - name: Set env vars (Linux x86_64)
-    if: ${{ runner.os == 'Linux' && runner.arch != 'ARM64' && env.IRONHIDE_INSTALLED != 'true' }}
-    shell: bash
-    run: |
-      echo FILE_PATTERN='*linux-musl*' >> $GITHUB_ENV
-      echo UNZIP_CMD='tar -xf *linux-musl*' >> $GITHUB_ENV
-  - name: Set env vars (mac arm64)
-    if: ${{ runner.os == 'macOS' && runner.arch == 'ARM64' && env.IRONHIDE_INSTALLED != 'true' }}
-    shell: bash
-    run: |
-      echo FILE_PATTERN='*aarch64-apple-darwin*' >> $GITHUB_ENV
-      echo UNZIP_CMD='tar -xf *aarch64-apple-darwin*' >> $GITHUB_ENV
-  - name: Set env vars (mac x86_64)
-    if: ${{ runner.os == 'macOS' && runner.arch != 'ARM64' && env.IRONHIDE_INSTALLED != 'true' }}
-    shell: bash
-    run: |
-      echo FILE_PATTERN='*x86_64-apple-darwin*' >> $GITHUB_ENV
-      echo UNZIP_CMD='tar -xf *x86_64-apple-darwin*' >> $GITHUB_ENV
-  - name: Set env vars (Windows)
-    if: ${{ runner.os == 'Windows' && env.IRONHIDE_INSTALLED != 'true' }}
-    shell: bash
-    run: |
-      echo FILE_PATTERN='*windows-msvc*' >> $GITHUB_ENV
-      echo UNZIP_CMD='7z x *windows-msvc*' >> $GITHUB_ENV
+      if [ -f '${{ runner.temp }}'/ironhide ]; then
+        echo "ironhide is already installed."
+        echo "installed=true" >> "$GITHUB_OUTPUT"
+        exit 0
+      fi
+
+      case ${{ runner.os }} in
+        Linux)
+          if [ "${{ runner.arch }}" = "ARM64" ]; then
+            echo 'file_pattern=*aarch64-unknown-linux*' >> "$GITHUB_OUTPUT"
+          else
+            echo 'file_pattern=*linux-musl*' >> "$GITHUB_OUTPUT"
+          fi
+          ;;
+
+        macOS)
+          if [ "${{ runner.arch }}" = "ARM64" ]; then
+            echo 'file_pattern=*aarch64-apple-darwin*' >> "$GITHUB_OUTPUT"
+          else
+            echo 'file_pattern=*x86_64-apple-darwin*' >> "$GITHUB_OUTPUT"
+          fi
+          ;;
+
+        Windows)
+          echo 'file_pattern=*windows-msvc*' >> "$GITHUB_OUTPUT"
+          ;;
+
+        *)
+          echo "Unknown runner os `${{ runner.os }}`."
+          exit 1
+          ;;
+      esac
   - name: Download ironhide release
-    if: env.IRONHIDE_INSTALLED != 'true'
-    uses: robinraju/release-downloader@v1.7
+    if: steps.setup.outputs.installed != 'true'
+    uses: robinraju/release-downloader@v1.8
     with:
       repository: "IronCoreLabs/ironhide"
-      fileName: ${{ env.FILE_PATTERN }}
+      fileName: ${{ steps.setup.outputs.file_pattern }}
       latest: true
-  - name: Unzip and install ironhide
-    if: env.IRONHIDE_INSTALLED != 'true'
+      extract: true
+      out-file-path: ironhide_download
+  - name: Install ironhide
+    if: steps.setup.outputs.installed != 'true'
     shell: bash
     run: |
-      ${{ env.UNZIP_CMD }}
-      mv ${{ env.FILE_PATTERN }}/ironhide* ironhide
+      mv ironhide_download/${{ steps.setup.outputs.file_pattern }}/ironhide* '${{ runner.temp }}'/ironhide
+      rm -rf ironhide_download
+      rm -rf typescript
       mkdir -p ~/.iron
       echo '${{ inputs.keys }}' > ~/.iron/keys
-      echo IRONHIDE_INSTALLED=true >> $GITHUB_ENV
   - name: Decrypt file
-    if: ${{ runner.os == 'Linux' }}
+    if: runner.os == 'Linux'
     # hack to get a tty in github so ironhide prints output
     shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
     run: |
-      ./ironhide file decrypt ${{ inputs.input }}
+      '${{ runner.temp }}'/ironhide file decrypt ${{ inputs.input }}
       echo 'Decryption of [${{ inputs.input }}] was successful!'
   - name: Decrypt file
-    if: ${{ runner.os == 'macOS' }}
+    if: runner.os == 'macOS'
     # hack to get a tty in github so ironhide prints output
     shell: 'script -Fq /dev/null /bin/sh -c "bash --noprofile --norc -eo pipefail {0}"'
     run: |
-      ./ironhide file decrypt ${{ inputs.input }}
+      '${{ runner.temp }}'/ironhide file decrypt ${{ inputs.input }}
       echo 'Decryption of [${{ inputs.input }}] was successful!'
   - name: Decrypt file
-    if: ${{ runner.os == 'Windows' }}
+    if: runner.os == 'Windows'
     # we can't fake a tty on windows, so error output here is a bit worse
     shell: bash
     run: |
-      ./ironhide file decrypt ${{ inputs.input }}
+      '${{ runner.temp }}'/ironhide file decrypt ${{ inputs.input }}
       echo 'Decryption of [${{ inputs.input }}] was successful!'
