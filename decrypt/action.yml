@@ -7,6 +7,10 @@ inputs:
   input:
     description: Name of file to decrypt.
     required: true
+  working-directory:
+    description: 'The working directory where the encrypted input file is located.'
+    required: false
+    default: '.'
 runs:
   using: composite
   steps:
@@ -19,6 +23,13 @@ runs:
         echo "installed=true" >> "$GITHUB_OUTPUT"
         exit 0
       fi
+
+      if [ ! -d "${{ inputs.working-directory }}" ]; then
+        echo "Working directory '${{ inputs.working-directory }}' does not exist."
+        exit 1
+      fi
+
+      cd "${{ inputs.working-directory }}"
 
       case ${{ runner.os }} in
         Linux)
