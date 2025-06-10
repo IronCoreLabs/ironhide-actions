@@ -29,8 +29,6 @@ runs:
         exit 1
       fi
 
-      cd "${{ inputs.working-directory }}"
-
       case ${{ runner.os }} in
         Linux)
           if [ "${{ runner.arch }}" = "ARM64" ]; then
@@ -80,6 +78,7 @@ runs:
     # hack to get a tty in github so ironhide prints output
     shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
     run: |
+      cd "${{ inputs.working-directory }}"
       '${{ runner.temp }}'/ironhide file decrypt ${{ inputs.input }}
       echo 'Decryption of [${{ inputs.input }}] was successful!'
   - name: Decrypt file
@@ -87,6 +86,7 @@ runs:
     # hack to get a tty in github so ironhide prints output
     shell: 'script -Fq /dev/null /bin/sh -c "bash --noprofile --norc -eo pipefail {0}"'
     run: |
+      cd "${{ inputs.working-directory }}"
       '${{ runner.temp }}'/ironhide file decrypt ${{ inputs.input }}
       echo 'Decryption of [${{ inputs.input }}] was successful!'
   - name: Decrypt file
@@ -94,5 +94,6 @@ runs:
     # we can't fake a tty on windows, so error output here is a bit worse
     shell: bash
     run: |
+      cd "${{ inputs.working-directory }}"
       '${{ runner.temp }}'/ironhide file decrypt ${{ inputs.input }}
       echo 'Decryption of [${{ inputs.input }}] was successful!'
